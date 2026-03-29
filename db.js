@@ -1,13 +1,22 @@
-const { Pool } = require("pg");
+const sqlite3 = require("sqlite3").verbose();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+// Create / connect to database file
+const db = new sqlite3.Database("./database.db", (err) => {
+  if (err) {
+    console.error("❌ SQLite connection error:", err);
+  } else {
+    console.log("✅ Connected to SQLite database");
+  }
 });
 
-pool
-  .query("SELECT 1")
-  .then(() => console.log("✅ Connected to Neon PostgreSQL"))
-  .catch(err => console.error("❌ Neon connection failed:", err));
+// Create table if not exists
+db.run(`
+  CREATE TABLE IF NOT EXISTS contact_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    email TEXT,
+    message TEXT
+  )
+`);
 
-module.exports = pool;
+module.exports = db;

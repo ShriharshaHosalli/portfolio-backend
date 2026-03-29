@@ -1,11 +1,16 @@
 {
+  "name": "portfolio-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "mssql": "^12.2.0",
-    "nodemailer": "^7.0.12",
+    "express": "^4.19.2",
     "pg": "^8.16.3",
-    "resend": "^6.7.0"
+    "resend": "^6.7.0",
+    "sqlite3": "^6.0.1"
   }
 }
