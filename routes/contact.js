@@ -2,16 +2,16 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// Optional GET route (for browser testing)
+// GET route (for testing)
 router.get("/", (req, res) => {
   res.send("Contact API is working");
 });
 
-// POST route (actual functionality)
+// POST route
 router.post("/", (req, res) => {
   const { name, email, message } = req.body;
 
-  // Validation
+  // validation
   if (!name || !email || !message) {
     return res.status(400).json({
       success: false,
@@ -19,27 +19,29 @@ router.post("/", (req, res) => {
     });
   }
 
-  const query = `
-    INSERT INTO contact_messages (name, email, message)
-    VALUES (?, ?, ?)
-  `;
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO contact_messages (name, email, message)
+      VALUES (?, ?, ?)
+    `);
 
-  db.run(query, [name, email, message], function (err) {
-    if (err) {
-      console.error("❌ DB error:", err);
-      return res.status(500).json({
-        success: false,
-        error: "Database error"
-      });
-    }
+    const result = stmt.run(name, email, message);
 
-    console.log("✅ Data inserted, ID:", this.lastID);
+    console.log("✅ Inserted ID:", result.lastInsertRowid);
 
     res.status(201).json({
       success: true,
-      id: this.lastID
+      id: result.lastInsertRowid
     });
-  });
+
+  } catch (err) {
+    console.error("❌ DB error:", err);
+
+    res.status(500).json({
+      success: false,
+      error: "Database error"
+    });
+  }
 });
 
 module.exports = router;

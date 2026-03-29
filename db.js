@@ -1,22 +1,17 @@
-const sqlite3 = require("sqlite3").verbose();
+const Database = require("better-sqlite3");
 
-// Create / connect to database file
-const db = new sqlite3.Database("./database.db", (err) => {
-  if (err) {
-    console.error("❌ SQLite connection error:", err);
-  } else {
-    console.log("✅ Connected to SQLite database");
-  }
-});
+// creates file automatically if not exists
+const db = new Database("contact.db");
 
-// Create table if not exists
-db.run(`
+// create table if not exists
+db.prepare(`
   CREATE TABLE IF NOT EXISTS contact_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT,
-    message TEXT
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    message TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
-`);
+`).run();
 
 module.exports = db;
